@@ -8,7 +8,7 @@ local Packet = require(ReplicatedStorage.Modules.Packet)
 local TweenService = game:GetService("TweenService")
 local BagSpawned = Packet("BagSpawned", Packet.NumberU8, Packet.NumberU16, Packet.NumberU8, Packet.NumberU8, Packet.NumberU8, Packet.EnumItem)
 local BagDeleted = Packet("BagDeleted", Packet.NumberU8, Packet.NumberU16)
-local BagClicked  = Packet("BagClicked",       Packet.NumberU16)
+local BagClicked = Packet("BagClicked", Packet.NumberU8, Packet.NumberU16)
 
 local RaycastParam = RaycastParams.new()
 RaycastParam.FilterType = Enum.RaycastFilterType.Include
@@ -39,7 +39,13 @@ function ConveyorClient.new(ConveyorModel: Model)
         local BagModelClone = BagModel:Clone()
         local originalSize = BagModelClone.Size
  
+        local clickDetector = Instance.new("ClickDetector")
+        clickDetector.Parent = BagModelClone
 
+        clickDetector.MouseClick:Connect(function()
+            print("Client clicked bag ID:", id, "on conveyor:", self.ConveyorId)
+            BagClicked:Fire(self.ConveyorId, id)
+        end)
 
         local groundY = rayResult and rayResult.Position.Y or rayOrigin.Y
         local spawnCFrame = CFrame.new(
@@ -110,7 +116,7 @@ function ConveyorClient.Advance(self, dt: number)
     end
 
     if #parts > 0 then
-        workspace:BulkMoveTo(parts, cframes, Enum.BulkMoveMode.FireCFrameChanged)
+        workspace:BulkMoveTo(parts, cframes, Enum.BulkMoveMode.FireCFrameChanged) -- Optimization
     end
 end
 

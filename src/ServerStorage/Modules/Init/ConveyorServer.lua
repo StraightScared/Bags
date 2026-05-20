@@ -7,7 +7,7 @@ local Packet = require(ReplicatedStorage.Modules.Packet)
 local SliderPacket    = Packet("SliderValue",       Packet.NumberU8)
 local BagSpawned = Packet("BagSpawned", Packet.NumberU8, Packet.NumberU16, Packet.NumberU8, Packet.NumberU8, Packet.NumberU8, Packet.EnumItem)
 local BagDeleted = Packet("BagDeleted", Packet.NumberU8, Packet.NumberU16)
-local BagClicked      = Packet("BagClicked",        Packet.NumberU16)
+local BagClicked = Packet("BagClicked", Packet.NumberU8, Packet.NumberU16)
 
 local ConveyorServer = {}
 ConveyorServer.__index = ConveyorServer
@@ -28,10 +28,6 @@ function ConveyorServer.new(ConveyorModel: Model)
         self.Rate = math.max(value, 1) 
         self.SpawnTimer = 0 
 
-    end)
-
-    BagClicked.OnServerEvent:Connect(function(player, id)
-        print(player.Name, "clicked bag ID:", id)
     end)
 
     RunService.Heartbeat:Connect(function(dt)
@@ -80,6 +76,9 @@ end
 
 function ConveyorServer.Init()
     local id = 0
+    BagClicked.OnServerEvent:Connect(function(player, conveyorId, id)
+        print(player.Name, "clicked bag ID:", id, "on conveyor:", conveyorId)
+    end)
     for _, ConveyorModel in Conveyors:GetChildren() do
         id += 1
         ConveyorModel:SetAttribute("ConveyorId", id)
