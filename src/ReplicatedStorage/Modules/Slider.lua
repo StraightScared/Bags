@@ -21,19 +21,30 @@ export type Slider = typeof(setmetatable({} :: {
 function Slider.new(gui: ScreenGui, min: number?, max: number?): Slider
     local self = setmetatable({}, Slider)
 
-	local SliderContainer = gui:WaitForChild("SliderContainer")
-	local Bar = SliderContainer:WaitForChild("Bar")
+    local SliderContainer = gui:WaitForChild("SliderContainer")
+    local Bar = SliderContainer:WaitForChild("Bar")
 
-	self.Bar = Bar
+    self.Bar = Bar
     self.Handle = SliderContainer:WaitForChild("Handle")
     self.Fill = Bar:WaitForChild("Fill")
     self.MinValue = min or 0
-    self.MaxValue = max or 100
+    self.MaxValue = max or 5
     self.IsDragging = false
-    self.Value = 0,
+    self.Value = 0
 
-	self:ConnectInputs()
-	return self
+    self:ConnectInputs()
+    self:SetValue(1)
+    return self
+end
+
+function Slider:SetValue(value: number)
+    local percentage = (value - self.MinValue) / (self.MaxValue - self.MinValue)
+    percentage = math.clamp(percentage, 0, 1)
+
+    self.Handle.Position = UDim2.new(percentage, 0, self.Handle.Position.Y.Scale, self.Handle.Position.Y.Offset)
+    self.Fill.Size = UDim2.new(percentage, 0, 1, 0)
+    self.Value = value
+    SliderPacket:Fire(value)
 end
 
 function Slider:Update(inputPosition: Vector3)
