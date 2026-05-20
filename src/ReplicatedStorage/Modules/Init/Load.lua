@@ -6,6 +6,7 @@ local SliderModule = require(Modules:WaitForChild("Slider"))
 local Load = {}
 
 function Load.Init()
+    if not Players.LocalPlayer:GetAttribute("HasSlider") then return end
     local PossibleSliderUI = GUI:FindFirstChild("Slider")
     if PossibleSliderUI then
         PossibleSliderUI.Parent = Players.LocalPlayer.PlayerGui
