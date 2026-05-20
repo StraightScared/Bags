@@ -82,7 +82,7 @@ function ConveyorServer.Init()
     for _, ConveyorModel in Conveyors:GetChildren() do
         id += 1
         ConveyorModel:SetAttribute("ConveyorId", id)
-        ConveyorServer.new(ConveyorModel) -- remove the second one
+        ConveyorServer.new(ConveyorModel)
     end
 end
 return ConveyorServer
