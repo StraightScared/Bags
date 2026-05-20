@@ -5,8 +5,10 @@ local Players = game:GetService("Players")
 local firstPlayer = nil
 
 for _, module in Modules.Init:GetChildren() do
-    local requiredModule = require(module)
-    requiredModule.Init()
+    task.spawn(function()
+        local requiredModule = require(module)
+        requiredModule.Init()   
+    end)
 end
 
 Players.PlayerAdded:Connect(function(player)
